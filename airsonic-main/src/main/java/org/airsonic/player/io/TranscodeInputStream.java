@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +74,29 @@ public class TranscodeInputStream extends InputStream {
                 }
             }).start();
         }
+    }
+
+    /**
+     * Overloaded constructor to support optional tmpFile parameter for compatibility.
+     *
+     * @param processBuilder Used to create the external process.
+     * @param in             Data to feed to the process. May be {@code null}.
+     * @param tmpFile        Temporary file (currently unused in memory-based processing).
+     * @throws IOException If an I/O error occurs.
+     */
+    public TranscodeInputStream(ProcessBuilder processBuilder, final InputStream in, Path tmpFile) throws IOException {
+        this(processBuilder, in);
+        LOG.info("Compatibility constructor with tmpFile called. tmpFile path: {}", tmpFile);
+        // tmpFile is ignored since this implementation avoids file-based operations
+    }
+
+    /**
+     * Retrieves the associated process for external access.
+     *
+     * @return The underlying process.
+     */
+    public Process getProcess() {
+        return process;
     }
 
     @Override
